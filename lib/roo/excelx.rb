@@ -277,6 +277,10 @@ module Roo
       end
     end
 
+    def merged_ranges(sheet = nil)
+      sheet_for(sheet).merged_ranges
+    end
+
     # Yield an array of Excelx::Cell
     # Takes options for sheet, pad_cells, and max_rows
     def each_row_streaming(options = {})

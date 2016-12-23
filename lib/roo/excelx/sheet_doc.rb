@@ -29,6 +29,10 @@ module Roo
         @dimensions ||= extract_dimensions
       end
 
+      def merged_ranges
+        @merged_ranges ||= get_merged_ranges
+      end
+
       # Yield each row xml element to caller
       def each_row_streaming(&block)
         Roo::Utils.each_element(@path, 'row', &block)
@@ -172,20 +176,25 @@ module Roo
         end.compact]
       end
 
-      def expand_merged_ranges(cells)
-        # Extract merged ranges from xml
+      def get_merged_ranges
+        # Extract merged ranges from ml
         merges = {}
         doc.xpath('/worksheet/mergeCells/mergeCell').each do |mergecell_xml|
           tl, br = mergecell_xml['ref'].split(/:/).map { |ref| ::Roo::Utils.ref_to_key(ref) }
           for row in tl[0]..br[0] do
             for col in tl[1]..br[1] do
               next if row == tl[0] && col == tl[1]
+              p [tl, br]
               merges[[row, col]] = tl
             end
           end
         end
+        merges
+      end
+
+      def expand_merged_ranges(cells)
         # Duplicate value into all cells in merged range
-        merges.each do |dst, src|
+        get_merged_ranges.each do |dst, src|
           cells[dst] = cells[src]
         end
       end

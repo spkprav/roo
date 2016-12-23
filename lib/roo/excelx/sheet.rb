@@ -85,6 +85,10 @@ module Roo
         @sheet.dimensions
       end
 
+      def merged_ranges
+        @sheet.merged_ranges
+      end
+
       private
 
       # Take an xml row and return an array of Excelx::Cell objects
